@@ -1,0 +1,32 @@
+# ZombieSMP Configuration File
+
+# Messages
+messages:
+  prefix: "&c[ZombieSMP]&r "
+  zombie_infected: "&cYou have been infected by a zombie! You are now a zombie for 10 minutes."
+  zombie_cured: "&aYou have been cured from the zombie infection!"
+  zombie_added: "&c{player} has been turned into a zombie by staff."
+  zombie_cleared: "&a{player} has been cured from zombie infection by staff."
+  player_not_found: "&cPlayer not found."
+  already_zombie: "&c{player} is already a zombie."
+  not_zombie: "&c{player} is not a zombie."
+  zombie_attack_immune: "&cZombies cannot attack other zombies!"
+  bed_explosion: "&cBeds explode in this world! You cannot sleep during the apocalypse."
+
+# Commands executed when player becomes zombie
+zombie_command: "lp user {player} parent set zombie"
+
+# Commands executed when player is cured (use {previous_group} placeholder)
+cure_command: "lp user {player} parent set {previous_group}"
+
+# Zombie duration in minutes
+zombie_duration_minutes: 10
+
+# Zombie spawn multiplier (1.0 = normal, 4.0 = 4x more zombies)
+zombie_spawn_multiplier: 4.0
+
+# Whether beds should explode like in the nether
+beds_explode: true
+
+# Whether to track offline time (if false, timer only counts while online)
+count_offline_time: true

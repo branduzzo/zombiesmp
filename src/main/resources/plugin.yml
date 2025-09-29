@@ -1,0 +1,19 @@
+name: ZombieSMP
+version: '1.0.0'
+main: me.branduzzo.zombieSMP.ZombieSMP
+api-version: 1.21
+depend: [LuckPerms]
+softdepend: [PlaceholderAPI]
+author: Branduzzo
+description: A zombie survival plugin with LuckPerms integration
+
+commands:
+  zombies:
+    description: Zombie management commands
+    usage: /zombies <add|clear> [player]
+    permission: zombies.staff
+
+permissions:
+  zombies.staff:
+    description: Permission to use zombie staff commands
+    default: op
