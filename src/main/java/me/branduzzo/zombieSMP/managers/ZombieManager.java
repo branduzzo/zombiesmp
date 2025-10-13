@@ -2,9 +2,9 @@ package me.branduzzo.zombieSMP.managers;
 
 import me.branduzzo.zombieSMP.ZombieSMP;
 import net.luckperms.api.model.user.User;
-import net.luckperms.api.node.Node;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -18,7 +18,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ZombieManager {
-
     private final ZombieSMP plugin;
     private final Map<UUID, ZombieData> zombies;
     private final Map<UUID, Integer> zombieCount;
@@ -30,7 +29,6 @@ public class ZombieManager {
         this.zombies = new ConcurrentHashMap<>();
         this.zombieCount = new ConcurrentHashMap<>();
         this.dataFile = new File(plugin.getDataFolder(), "zombiedata.yml");
-
         loadData();
         startZombieTask();
     }
@@ -40,10 +38,8 @@ public class ZombieManager {
 
         String previousGroup = getPrimaryGroup(player);
         long endTime = System.currentTimeMillis() + (plugin.getConfig().getLong("zombie_duration_minutes") * 60000);
-
         ZombieData data = new ZombieData(previousGroup, endTime, System.currentTimeMillis());
         zombies.put(player.getUniqueId(), data);
-
         zombieCount.put(player.getUniqueId(), zombieCount.getOrDefault(player.getUniqueId(), 0) + 1);
 
         String zombieCommand = plugin.getConfig().getString("zombie_command").replace("{player}", player.getName());
@@ -51,10 +47,14 @@ public class ZombieManager {
 
         applyZombieEffects(player);
 
-        String message = byStaff ?
-                plugin.getConfig().getString("messages.zombie_added").replace("{player}", player.getName()) :
-                plugin.getConfig().getString("messages.zombie_infected");
+        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 2.0f);
+        player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&c&lZOMBIEE"),
+                ChatColor.translateAlternateColorCodes('&', "&7You have been infected!"),
+                10, 70, 20);
 
+        String message = byStaff
+                ? plugin.getConfig().getString("messages.zombie_added").replace("{player}", player.getName())
+                : plugin.getConfig().getString("messages.zombie_infected");
         sendMessage(player, message);
 
         saveData();
@@ -69,11 +69,9 @@ public class ZombieManager {
         String cureCommand = plugin.getConfig().getString("cure_command")
                 .replace("{player}", player.getName())
                 .replace("{previous_group}", data.getPreviousGroup());
-
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cureCommand);
 
         sendMessage(player, plugin.getConfig().getString("messages.zombie_cured"));
-
         saveData();
     }
 
@@ -88,7 +86,6 @@ public class ZombieManager {
                 String cureCommand = plugin.getConfig().getString("cure_command")
                         .replace("{player}", playerName)
                         .replace("{previous_group}", data.getPreviousGroup());
-
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cureCommand);
                 saveData();
             }
@@ -108,7 +105,8 @@ public class ZombieManager {
     }
 
     public void applyZombieEffects(Player player) {
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, 0, false, false, false));
+        int slownessLevel = Math.min(3, Math.max(1, plugin.getConfig().getInt("slowness_level", 1)));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, slownessLevel - 1, false, false, false));
     }
 
     public void removeZombieEffects(Player player) {
@@ -197,7 +195,6 @@ public class ZombieManager {
                 long endTime = dataConfig.getLong("zombies." + uuidString + ".endTime");
                 long lastSeen = dataConfig.getLong("zombies." + uuidString + ".lastSeen");
                 long accumulatedTime = dataConfig.getLong("zombies." + uuidString + ".accumulatedTime");
-
                 zombies.put(uuid, new ZombieData(previousGroup, endTime, lastSeen, accumulatedTime));
             }
         }
@@ -215,7 +212,6 @@ public class ZombieManager {
         for (Map.Entry<UUID, ZombieData> entry : zombies.entrySet()) {
             String uuidString = entry.getKey().toString();
             ZombieData data = entry.getValue();
-
             dataConfig.set("zombies." + uuidString + ".previousGroup", data.getPreviousGroup());
             dataConfig.set("zombies." + uuidString + ".endTime", data.getEndTime());
             dataConfig.set("zombies." + uuidString + ".lastSeen", data.getLastSeen());
@@ -257,7 +253,6 @@ public class ZombieManager {
         public long getEndTime() { return endTime; }
         public long getLastSeen() { return lastSeen; }
         public long getAccumulatedTime() { return accumulatedTime; }
-
         public void setLastSeen(long lastSeen) { this.lastSeen = lastSeen; }
         public void addAccumulatedTime(long time) { this.accumulatedTime += time; }
     }

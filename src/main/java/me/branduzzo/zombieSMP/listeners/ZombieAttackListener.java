@@ -8,9 +8,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-public class ZombieAttackListener implements Listener {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
+public class ZombieAttackListener implements Listener {
     private final ZombieSMP plugin;
+    private final Map<UUID, Integer> playerHitCount = new HashMap<>();
 
     public ZombieAttackListener(ZombieSMP plugin) {
         this.plugin = plugin;
@@ -23,13 +27,21 @@ public class ZombieAttackListener implements Listener {
         }
 
         Player player = (Player) event.getEntity();
-
         if (plugin.getZombieManager().isZombie(player)) {
             return;
         }
 
         if (player.getWorld().getTime() >= 13000 && player.getWorld().getTime() <= 23000) {
-            plugin.getZombieManager().makeZombie(player, false);
+            int hitsRequired = plugin.getConfig().getInt("hits_required_to_transform", 2);
+            int currentHits = playerHitCount.getOrDefault(player.getUniqueId(), 0) + 1;
+
+            if (currentHits >= hitsRequired) {
+                event.setDamage(0);
+                playerHitCount.remove(player.getUniqueId());
+                plugin.getZombieManager().makeZombie(player, false);
+            } else {
+                playerHitCount.put(player.getUniqueId(), currentHits);
+            }
         }
     }
 
@@ -42,8 +54,22 @@ public class ZombieAttackListener implements Listener {
         Player attacker = (Player) event.getDamager();
         Player victim = (Player) event.getEntity();
 
+        if (plugin.getZombieManager().isZombie(attacker) && plugin.getZombieManager().isZombie(victim)) {
+            event.setCancelled(true);
+            return;
+        }
+
         if (plugin.getZombieManager().isZombie(attacker) && !plugin.getZombieManager().isZombie(victim)) {
-            plugin.getZombieManager().makeZombie(victim, false);
+            int hitsRequired = plugin.getConfig().getInt("hits_required_to_transform", 2);
+            int currentHits = playerHitCount.getOrDefault(victim.getUniqueId(), 0) + 1;
+
+            if (currentHits >= hitsRequired) {
+                event.setDamage(0);
+                playerHitCount.remove(victim.getUniqueId());
+                plugin.getZombieManager().makeZombie(victim, false);
+            } else {
+                playerHitCount.put(victim.getUniqueId(), currentHits);
+            }
         }
     }
 }
