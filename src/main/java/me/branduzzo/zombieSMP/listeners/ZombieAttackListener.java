@@ -66,7 +66,7 @@ public class ZombieAttackListener implements Listener {
             if (currentHits >= hitsRequired) {
                 event.setDamage(0);
                 playerHitCount.remove(victim.getUniqueId());
-                plugin.getZombieManager().makeZombie(victim, false);
+                plugin.getZombieManager().makeZombie(victim, false, attacker);
             } else {
                 playerHitCount.put(victim.getUniqueId(), currentHits);
             }

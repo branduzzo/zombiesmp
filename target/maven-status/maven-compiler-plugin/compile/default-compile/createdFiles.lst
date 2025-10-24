@@ -1,0 +1,15 @@
+me\branduzzo\zombieSMP\listeners\ZombieAttackListener.class
+me\branduzzo\zombieSMP\listeners\ZombieSunDamageListener$1.class
+me\branduzzo\zombieSMP\listeners\ZombieSpawnListener$1.class
+me\branduzzo\zombieSMP\managers\ZombieManager$ZombieData.class
+me\branduzzo\zombieSMP\listeners\BedExplosionListener.class
+me\branduzzo\zombieSMP\managers\ZombieManager.class
+me\branduzzo\zombieSMP\listeners\ZombieEffectListener.class
+me\branduzzo\zombieSMP\listeners\ZombieSunDamageListener.class
+me\branduzzo\zombieSMP\commands\ZombiesCommand.class
+me\branduzzo\zombieSMP\listeners\PlayerJoinLeaveListener.class
+me\branduzzo\zombieSMP\managers\ZombieManager$1.class
+me\branduzzo\zombieSMP\listeners\ZombiePvPListener.class
+me\branduzzo\zombieSMP\ZombieSMP.class
+me\branduzzo\zombieSMP\listeners\ZombieSpawnListener.class
+me\branduzzo\zombieSMP\placeholders\ZombiePlaceholder.class

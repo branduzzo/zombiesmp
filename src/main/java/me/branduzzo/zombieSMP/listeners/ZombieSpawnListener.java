@@ -1,15 +1,14 @@
 package me.branduzzo.zombieSMP.listeners;
 
 import me.branduzzo.zombieSMP.ZombieSMP;
+import org.bukkit.World;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class ZombieSpawnListener implements Listener {
-
     private final ZombieSMP plugin;
 
     public ZombieSpawnListener(ZombieSMP plugin) {
@@ -26,14 +25,16 @@ public class ZombieSpawnListener implements Listener {
             return;
         }
 
-        long worldTime = event.getLocation().getWorld().getTime();
-        if (worldTime < 13000 || worldTime > 23000) {
-            return;
+        World.Environment environment = event.getLocation().getWorld().getEnvironment();
+        if (environment == World.Environment.NORMAL) {
+            long worldTime = event.getLocation().getWorld().getTime();
+            if (worldTime < 13000 || worldTime > 23000) {
+                return;
+            }
         }
 
         double multiplier = plugin.getConfig().getDouble("zombie_spawn_multiplier", 4.0);
         int additionalSpawns = (int) (multiplier - 1);
-
         if (additionalSpawns <= 0) {
             return;
         }

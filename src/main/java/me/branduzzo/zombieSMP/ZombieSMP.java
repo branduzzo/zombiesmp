@@ -64,6 +64,8 @@ public class ZombieSMP extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerJoinLeaveListener(this), this);
         getServer().getPluginManager().registerEvents(new ZombieEffectListener(this), this);
         getServer().getPluginManager().registerEvents(new ZombiePvPListener(this), this);
+        getServer().getPluginManager().registerEvents(new ZombieSunDamageListener(this), this);
+
     }
 
     private void setupPlaceholders() {

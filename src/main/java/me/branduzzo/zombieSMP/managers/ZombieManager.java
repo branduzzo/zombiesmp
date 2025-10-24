@@ -34,6 +34,10 @@ public class ZombieManager {
     }
 
     public void makeZombie(Player player, boolean byStaff) {
+        makeZombie(player, byStaff, null);
+    }
+
+    public void makeZombie(Player player, boolean byStaff, Player infector) {
         if (isZombie(player)) return;
 
         String previousGroup = getPrimaryGroup(player);
@@ -48,14 +52,23 @@ public class ZombieManager {
         applyZombieEffects(player);
 
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 2.0f);
-        player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&c&lZOMBIEE"),
-                ChatColor.translateAlternateColorCodes('&', "&7You have been infected!"),
+
+        String mainTitle = plugin.getConfig().getString("infection_title.main_title", "&c&lZOMBIEE");
+        String subtitle = plugin.getConfig().getString("infection_title.subtitle", "&7You have been infected!");
+        player.sendTitle(ChatColor.translateAlternateColorCodes('&', mainTitle),
+                ChatColor.translateAlternateColorCodes('&', subtitle),
                 10, 70, 20);
 
         String message = byStaff
                 ? plugin.getConfig().getString("messages.zombie_added").replace("{player}", player.getName())
                 : plugin.getConfig().getString("messages.zombie_infected");
         sendMessage(player, message);
+
+        if (infector != null && plugin.getConfig().getBoolean("infection_reward.enabled", true)) {
+            String rewardCommand = plugin.getConfig().getString("infection_reward.command", "give %player% diamond 1")
+                    .replace("%player%", infector.getName());
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), rewardCommand);
+        }
 
         saveData();
     }
